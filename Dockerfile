@@ -10,11 +10,16 @@ COPY src ./src
 RUN mvn -B -q package -DskipTests
 
 # ---- Etapa 2: imagen final, solo con el JRE y el jar ----
-FROM eclipse-temurin:17-jre-alpine
+# Imagen basada en Ubuntu: funciona en Mac con chip Apple (arm64) y en Intel (amd64)
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
+# curl para el healthcheck de docker compose
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
 # No se ejecuta como root
-RUN addgroup -S app && adduser -S app -G app
+RUN groupadd --system app && useradd --system --gid app app
 USER app
 
 COPY --from=build /app/target/franquicias-api-*.jar app.jar
