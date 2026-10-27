@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: franquicias-api
+  data:
+    mongodb:
+      # En local apunta a un mongod en el puerto por defecto; en Docker se sobreescribe con la variable MONGODB_URI
+      uri: ${MONGODB_URI:mongodb://localhost:27017/franquicias}
+      # Crea los índices declarados con @Indexed al arrancar (nombre único de franquicia)
+      auto-index-creation: true
+
+server:
+  port: ${PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
