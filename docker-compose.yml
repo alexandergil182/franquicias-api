@@ -1,0 +1,35 @@
+# Levanta la API y MongoDB:  docker compose up --build
+services:
+  mongo:
+    image: mongo:7
+    container_name: franquicias-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: franquicias-api
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      # Dentro de la red de compose, MongoDB se llama "mongo"
+      MONGODB_URI: mongodb://mongo:27017/franquicias
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+
+volumes:
+  mongo-data:
