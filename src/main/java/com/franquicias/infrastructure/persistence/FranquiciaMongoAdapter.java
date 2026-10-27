@@ -6,6 +6,7 @@ import com.franquicias.domain.model.Sucursal;
 import com.franquicias.domain.port.out.FranquiciaRepositoryPort;
 import com.franquicias.infrastructure.persistence.FranquiciaDocument.ProductoDocument;
 import com.franquicias.infrastructure.persistence.FranquiciaDocument.SucursalDocument;
+import java.util.List;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -53,13 +54,13 @@ public class FranquiciaMongoAdapter implements FranquiciaRepositoryPort {
     }
 
     static Franquicia aDominio(FranquiciaDocument d) {
-        var sucursales = d.sucursales() == null ? java.util.List.<Sucursal>of()
+        var sucursales = d.sucursales() == null ? List.<Sucursal>of()
                 : d.sucursales().stream().map(FranquiciaMongoAdapter::aDominio).toList();
         return new Franquicia(d.id(), d.nombre(), sucursales, d.version());
     }
 
     private static Sucursal aDominio(SucursalDocument d) {
-        var productos = d.productos() == null ? java.util.List.<Producto>of()
+        var productos = d.productos() == null ? List.<Producto>of()
                 : d.productos().stream().map(p -> new Producto(p.id(), p.nombre(), p.stock())).toList();
         return new Sucursal(d.id(), d.nombre(), productos);
     }
