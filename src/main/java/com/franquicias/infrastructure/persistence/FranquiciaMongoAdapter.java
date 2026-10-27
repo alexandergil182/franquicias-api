@@ -43,7 +43,7 @@ public class FranquiciaMongoAdapter implements FranquiciaRepositoryPort {
 
     // ---- mapeos (los "serializers" entre dominio y documento) ----
 
-    static FranquiciaDocument aDocumento(Franquicia f) {
+    public static FranquiciaDocument aDocumento(Franquicia f) {
         return new FranquiciaDocument(f.id(), f.nombre(),
                 f.sucursales().stream().map(FranquiciaMongoAdapter::aDocumento).toList(), f.version());
     }
@@ -53,7 +53,7 @@ public class FranquiciaMongoAdapter implements FranquiciaRepositoryPort {
                 s.productos().stream().map(p -> new ProductoDocument(p.id(), p.nombre(), p.stock())).toList());
     }
 
-    static Franquicia aDominio(FranquiciaDocument d) {
+    public static Franquicia aDominio(FranquiciaDocument d) {
         var sucursales = d.sucursales() == null ? List.<Sucursal>of()
                 : d.sucursales().stream().map(FranquiciaMongoAdapter::aDominio).toList();
         return new Franquicia(d.id(), d.nombre(), sucursales, d.version());
